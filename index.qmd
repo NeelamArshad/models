@@ -1,5 +1,13 @@
 ---
-title: "Models"
+project:
+  type: website
+
+website:
+  title: "My Model Project"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
 author: "Neelam Arshad"
 format: html
 execute: 
