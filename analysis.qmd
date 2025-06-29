@@ -1,0 +1,40 @@
+---
+title: "Biden Polling"
+author: "Neelam Arshad"
+format: html
+execute: 
+  echo: false
+---
+Many factors, including age, political affiliation, and media exposure shape voting behavior in presidential elections. Using data from a YouGov poll of 1,559 US adult citizens, conducted March 10 - 12, 2024, we seek to understand what proportion of voters will support Biden in the 2024 election.
+
+
+```{r}
+#| message: false
+library(tidyverse)
+library(tidymodels)
+library(broom)
+library(marginaleffects)
+
+poll_data <- tibble(biden = as.factor(c(rep("Yes", 655), 
+                                        rep("No", 904)))) |> 
+                slice_sample(prop = 1)
+```
+
+
+```{r}
+#| cache: true
+fit_biden <- cat("We model the probability as:\n\n")
+cat("$$\n")
+cat("P(Y = 1) = \\frac{1}{1 + e^{-(\\beta_0 + \\beta_1 X_1 + \\beta_2 X_2 + \\cdots + \\beta_n X_n)}}\n")
+cat("$$\n")
+```
+
+## Summary
+One limitation of our model is that the survey data may not be fully representative of the November electorate, especially if voter turnout differs significantly across demographic groups.
+Public opinion polls provide crucial but imperfect snapshots of voter sentiment during campaigns. Using March 2024 YouGov survey data from 1,559 U.S. adults, we estimate the proportion of votes Joe Biden will receive in the November election. However, our estimates may be affected by differences in who ultimately turns out to vote, limiting the model’s ability to fully reflect election-day realities.
+
+We model support for Joe Biden, measured as the proportion of respondents expressing a preference for him, as a linear function of a constant term representing the average support in the population.
+
+We estimate that 42% of U.S. adults supported Biden in March 2024, with a 95% confidence interval ranging from 39% to 45%, suggesting weak re-election prospects under current conditions.
+
+

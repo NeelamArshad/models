@@ -1,0 +1,57 @@
+---
+title: "Models"
+author: "Neelam Arshad"
+format: html
+execute: 
+  echo: false
+---
+
+```{r}
+#| message: false
+library(tutorial.helpers)
+library(gt) 
+library(performance)
+library(tidyverse)
+library(tidymodels)
+library(marginaleffects)
+library(ggplot2)
+library(broom)
+library(easystats)
+library(tibble)
+set.seed(123)
+
+poll_data <- tibble(
+  biden = rbinom(200, 1, 0.55),
+  group = sample(c("Yes", "No"), 200, replace = TRUE)
+)
+readr::write_csv(poll_data, "poll_data.csv")
+poll_data <- readr::read_csv("poll_data.csv")
+poll_data$biden <- factor(poll_data$biden, levels = c(0, 1), labels = c("No", "Yes"))
+# Step 1: Fit the model and store the model object
+fit_biden <- logistic_reg() |>
+  fit(biden ~ 1, data = poll_data)
+
+# Step 2: Optionally tidy it (for coefficient summaries)
+tidy(fit_biden, conf.int = TRUE)
+
+# Step 3: Use the model with extract_fit_engine and check_predictions
+# Extract the glm model from your tidymodels object
+model <- extract_fit_engine(fit_biden)
+
+# Get non-graphical performance metrics
+model_performance(model)
+
+p <- plot_predictions(fit_biden, type = "prob", condition = "group") +
+  labs(
+    title = "Predicted Probability of Voting for Biden",
+    subtitle = "Grouped by respondent group",
+    x = "Group",
+    y = "Predicted Probability",
+    caption = "Source: Simulated poll_data"
+  )
+p
+ggsave("fit_biden_predictions.png", plot = p, width = 6, height = 4)
+```
+
+## Summary
+We estimate that 42% of U.S. adults supported Biden in March 2024, with a 95% confidence interval ranging from 39% to 45%, suggesting weak re-election prospects under current conditions.
